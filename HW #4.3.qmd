@@ -1,0 +1,103 @@
+---
+title: "HW #4.3: Reproducible Data Analysis"
+author: "Michael Shvindlerman"
+date: "11/18/26"
+format: pdf
+---
+
+# Planning A New Data Context
+## Simple Linear Regression Using the "cars" Data
+
+Using R's built-in "cars" data, we will create a simple linear regression model.
+The model will consist of miles-per-gallon (the response) and horsepower (the 
+predictor). We will first use R's built-in summary() function so we can create
+an estimated equation. Then, we will create a QQ-plot using the ggplot2 package 
+to check the normality assumption of the model. 
+
+# Simple Linear Regression Analysis
+
+## Summary Output for Miles-Per-Gallon ~ Horsepower SLR
+
+``` {r}
+#| label: tbl-slrSummary
+#| tbl-cap: "Miles-Per-Gallon ~ Horsepower: SLR Summary Output"
+#| tbl-pos: "H"
+#| tbl-width: 6.5
+#| tbl-height: 3
+#| tbl-alt: "A table featuring summary statistics of the mpg~hp SLR model"
+#| echo: FALSE
+data(mtcars)
+
+carsModel <- lm(mpg ~ hp, data = mtcars)
+summary(carsModel)
+```
+
+Using this table, we find that the estimated model is $\hat{Y} = 30.09886 - 0.06823X$. 
+We also observe that the percentage of variability explained by the predictor (horsepower)
+is 60.24%. If we wanted to test whether the true slope ($\beta_1$) for our model is 0, 
+we could use the F-test statistic found at the bottom of @tbl-slrSummary, which is 45.46. 
+Judging by the low p-value, for a 0.05 significance level,
+we would reject the null hypothesis for this test. In other words, we could state with 
+95% confidence that the slope ($\beta_1$) is not 0. 
+
+## QQ-Plot for Miles-Per-Gallon ~ Horsepower SLR
+
+``` {r}
+#| label: fig-slrQQPlot
+#| fig-cap: "QQ-Plot of Miles-Per-Gallon ~ Horsepower SLR Model"
+#| fig-pos: "H"
+#| fig-width: 6.5
+#| fig-height: 3
+#| fig-alt: "A graph of sample quartiles versus theoretical quartiles of the SLR model"
+#| echo: FALSE
+
+data(mtcars)
+#install.packages("ggplot2")
+# un-comment above line if ggplot2 is not installed, then re-comment
+library(ggplot2)
+
+carsResiduals <- data.frame(residuals = resid(carsModel))
+
+ggplot(data = carsResiduals, aes(sample = residuals)) +
+  geom_qq()+
+  geom_qq(color = "blue") +
+  geom_qq_line() +
+  labs(
+    title = "QQ-Plot of Residuals",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles",
+  )
+
+```
+
+We observe a linear pattern in the QQ-plot. This suggests that the normality
+assumption of our SLR model is met. There is a noticeably heavy right tail present 
+in @fig-slrQQPlot, however this does not likely impede on our assumption, given that 
+the overall pattern appears linear, and thus the errors are more than likely normal. 
+
+# Course Reflection
+
+In STAT 184, we began by installing R and RStudio. Before learning how to
+write programs, we first had to gain proficiency in the skill of proper goal-setting
+and planning. Then we applied these skills by creating simple functions in R (such as 
+the die-rolling simulator and the restaurant selector). In unit 2, we were exposed
+to the concept of a tidy data set (one consisting of cases as rows, and case attributes
+as columns). We applied this notion through the use of functions from R and the tidyverse
+package to clean-up data and make it tidy for later use.
+
+With the ability to tidy data, we then learned how to make data visualizations such as
+summary tables (like for the diamonds data in HW #3.1 and #3.3), as well as graphs using
+ggplot2. At this point, we learned about the various geometries available for use in 
+data visualizations, as well as strategies for creating effective plots for potential 
+viewers.
+
+This current unit has us using Quarto to create professional documents with text and figures. 
+This may help us in the future when we need to create reports or analyses involving graphs we
+have generated (perhaps with tidy data and using ggplot2), as well as narrative text to explain
+any relevant statistical phenomenon.
+
+{{< pagebreak >}}  
+
+::: {.callout-note title = "Note on GenAI Usage"}
+Generative AI tools were not used for any part of this assignment submission.
+:::
